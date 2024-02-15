@@ -2,9 +2,11 @@ package org.example.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @AllArgsConstructor
+@Setter
 public class ParkingSlot {
 
     private int slotNumber;
@@ -13,14 +15,17 @@ public class ParkingSlot {
 
     private Car car;
 
-    public void removeVehicle() {
-        car = null;
-        this.isAvailable = false;
-    }
-
-    public void parkVehicle(Car car) {
-        this.car = car;
+    public ParkingSlot() {
         this.isAvailable = true;
     }
 
+    public void removeVehicle() {
+        car = null;
+        this.isAvailable = true;
+    }
+
+    @Override
+    public String toString() {
+        return slotNumber + " " + car.toString();
+    }
 }

@@ -11,4 +11,8 @@ public class Car {
 
     private String color;
 
+    @Override
+    public String toString() {
+        return registrationNumber + " " + color;
+    }
 }
