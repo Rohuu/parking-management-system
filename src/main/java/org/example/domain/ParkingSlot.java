@@ -15,7 +15,8 @@ public class ParkingSlot {
 
     private Car car;
 
-    public ParkingSlot() {
+    public ParkingSlot(int slotNumber) {
+        this.slotNumber = slotNumber;
         this.isAvailable = true;
     }
 

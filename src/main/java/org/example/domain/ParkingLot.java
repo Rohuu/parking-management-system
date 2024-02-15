@@ -17,49 +17,56 @@ public class ParkingLot {
 
     public ParkingLot(int capacity) {
         this.capacity = capacity;
-        this.parkingSlots = new ArrayList<>();
-        new ParkingSlot();
+        this.parkingSlots = new ArrayList<>(capacity);
+        for (int i = 0; i < capacity; i++) {
+            this.parkingSlots.add(new ParkingSlot(i + 1));
+        }
+
         System.out.println("Created a parking lot with " + capacity + " slots");
     }
 
-    public void parkCar(String registrationNumber, String color) {
-        Car car = new Car(registrationNumber, color);
-        int availableSlot = findNextAvailableSlot(parkingSlots);
-        ParkingSlot parkingSlot = new ParkingSlot(availableSlot, false, car);
-        parkingSlots.add(parkingSlot);
-        System.out.println("Allocated slot number: " + availableSlot);
-    }
+    public int parkCar(String registrationNumber, String color) {
 
-    private int findNextAvailableSlot(List<ParkingSlot> parkingSlots) {
-        if (capacity == 0 || Objects.equals(capacity, parkingSlots.size())) {
-            return -1;
-        }
-        if (parkingSlots.isEmpty()) {
-            return 1;
-        }
+        Car car = new Car(registrationNumber, color);
         for (ParkingSlot slot : parkingSlots) {
-            if (!slot.isAvailable()) {
+            if (slot.isAvailable()) {
+                slot.setAvailable(false);
+                slot.setCar(car);
                 return slot.getSlotNumber();
             }
         }
-        return 0;
+        return -1;
     }
 
     public void showParkingStatus() {
-        System.out.println("Slot No. Registration No Colour");
+        System.out.println("Slot Registration-No Color");
         for (ParkingSlot slot : parkingSlots) {
-            System.out.println(slot.toString());
+            if (Objects.nonNull(slot.getCar())) {
+                System.out.println(slot.toString());
+
+            }
         }
     }
 
     public List<String> getRegistrationNumbersForColor(String color) {
         List<String> registrationNumbers = new ArrayList<>();
         for (ParkingSlot slot : parkingSlots) {
-            if (slot.getCar().getColor().equals(color)) {
+            if (!isCarParked(slot.getCar())) {
+                System.out.println("No such color car left in parking");
+            } else if (slot.getCar().getColor().equals(color)) {
                 registrationNumbers.add(slot.getCar().getRegistrationNumber());
             }
         }
         return registrationNumbers;
+    }
+
+    private boolean isCarParked(Car car) {
+        for (ParkingSlot slot : parkingSlots) {
+            if (slot.getCar().equals(car)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public List<ParkingSlot> getAllParkingSlotsForColor(String color) {
@@ -81,13 +88,15 @@ public class ParkingLot {
         return -1;
     }
 
-    public void leave(int slotNo) {
+    public int leave(int slotNo) {
         for (ParkingSlot slot : parkingSlots) {
             if (slot.getSlotNumber() == slotNo) {
                 slot.setAvailable(true);
                 slot.setCar(null);
+                return slot.getSlotNumber();
             }
         }
+        return -1;
     }
 
     public void exitConsole() {
