@@ -2,10 +2,12 @@ package org.example.domain;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.example.exception.SlotNotFoundException;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Getter
 @NoArgsConstructor
@@ -26,42 +28,34 @@ public class ParkingLot {
     public int parkCar(String registrationNumber, String color) {
 
         Car car = new Car(registrationNumber, color);
-        for (ParkingSlot slot : parkingSlots) {
-            if (slot.isAvailable()) {
-                slot.setAvailable(false);
-                slot.setCar(car);
-                return slot.getSlotNumber();
-            }
+        ParkingSlot availableSlot = parkingSlots.stream().filter(ParkingSlot::isAvailable).findFirst().orElse(null);
+
+        if (availableSlot != null) {
+            availableSlot.setAvailable(false);
+            availableSlot.setCar(car);
+            return availableSlot.getSlotNumber();
         }
         return -1;
     }
 
     public void showParkingStatus() {
         System.out.println("Slot Registration Color");
-        for (ParkingSlot slot : parkingSlots) {
-            if (Objects.nonNull(slot.getCar())) {
-                System.out.println(slot.toString());
-
-            }
-        }
+        parkingSlots.stream()
+                .filter(slot -> Objects.nonNull(slot.getCar()))
+                .forEach(slot -> System.out.println(slot.toString()));
     }
 
     public List<String> getRegistrationNumbersForColor(String color) {
-        List<String> registrationNumbers = new ArrayList<>();
-        for (ParkingSlot slot : parkingSlots) {
-            if (!isCarParked(slot.getCar())) {
-                System.out.println("No such color car left in parking");
-            } else if (slot.getCar().getColor().equals(color)) {
-                registrationNumbers.add(slot.getCar().getRegistrationNumber());
-            }
-        }
-        return registrationNumbers;
+        return parkingSlots.stream()
+                .filter(slot -> Objects.nonNull(slot.getCar()) && slot.getCar().getColor().equals(color))
+                .map(slot -> slot.getCar().getRegistrationNumber())
+                .collect(Collectors.toList());
     }
 
     private boolean isCarParked(Car car) {
         for (ParkingSlot slot : parkingSlots) {
             if (Objects.nonNull(slot) && (slot.getCar().equals(car))) {
-                    return true;
+                return true;
             }
         }
         return false;
@@ -77,16 +71,16 @@ public class ParkingLot {
         return slotsForGivenColor;
     }
 
-    public int findSlotNumber(String registrationNumber) {
+    public int findSlotNumber(String registrationNumber) throws SlotNotFoundException {
         for (ParkingSlot slot : parkingSlots) {
             if (slot.getCar().getRegistrationNumber().equals(registrationNumber)) {
                 return slot.getSlotNumber();
             }
         }
-        return -1;
+        throw new SlotNotFoundException("Slot not found for registration number: " + registrationNumber);
     }
 
-    public int leave(int slotNo) {
+    public int leave(int slotNo) throws SlotNotFoundException {
         for (ParkingSlot slot : parkingSlots) {
             if (slot.getSlotNumber() == slotNo) {
                 slot.setAvailable(true);
@@ -94,7 +88,7 @@ public class ParkingLot {
                 return slot.getSlotNumber();
             }
         }
-        return -1;
+        throw new SlotNotFoundException("Slot " + slotNo + " not found in the parking lot.");
     }
 
     public void exitConsole() {
