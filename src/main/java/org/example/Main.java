@@ -1,6 +1,7 @@
 package org.example;
 
 import org.example.domain.ParkingLot;
+import org.example.exception.SlotNotFoundException;
 
 import java.util.List;
 import java.util.Scanner;
@@ -86,7 +87,7 @@ public class Main {
         }
     }
 
-    private static void executeLeaveCommand(Matcher matcher) {
+    private static void executeLeaveCommand(Matcher matcher) throws SlotNotFoundException {
         int slotNo = Integer.parseInt(matcher.group(1));
         int freeSlotNum = parkingLot.leave(slotNo);
         if (freeSlotNum > 0) {
