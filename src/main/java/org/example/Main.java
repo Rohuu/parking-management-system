@@ -12,7 +12,7 @@ public class Main {
     private static ParkingLot parkingLot;
 
     public static void main(String[] args) {
-        printCommands();
+        printIntroduction();
 
         Scanner scanner = new Scanner(System.in);
         boolean exitRequested = false;
@@ -28,62 +28,99 @@ public class Main {
     }
 
     private static void executeCommand(String command) {
-
-
-        Pattern createPattern = Pattern.compile("create_parking_lot (\\d+)");
-        Matcher createMatcher = createPattern.matcher(command);
-
-        Pattern parkPattern = Pattern.compile("park (\\S+) (\\S+)");
-        Matcher parkMatcher = parkPattern.matcher(command);
-
-        Pattern leavePattern = Pattern.compile("leave (\\d+)");
-        Matcher leaveMatcher = leavePattern.matcher(command);
-
-        Pattern registrationNoPattern = Pattern.compile("registration_numbers_for_cars_with_colour (\\S+)");
-        Matcher registrationNoMatcher = registrationNoPattern.matcher(command);
-
-        Pattern statusPattern = Pattern.compile("status");
-        Matcher statusMatcher = statusPattern.matcher(command);
-
-        Pattern exitPattern = Pattern.compile("exit");
-        Matcher exitMatcher = exitPattern.matcher(command);
-
-        if (createMatcher.matches()) {
-            int capacity = Integer.parseInt(createMatcher.group(1));
-            parkingLot = new ParkingLot(capacity);
-        } else if (parkMatcher.matches()) {
-            String registrationNumber = parkMatcher.group(1);
-            String color = parkMatcher.group(2);
-            int parkedSlotNum = parkingLot.parkCar(registrationNumber, color);
-            if (parkedSlotNum > 0) System.out.println("Allocated slot number: " + parkedSlotNum);
-            else System.out.println("Sorry, parking lot is full");
-        } else if (leaveMatcher.matches()) {
-            int slotNo = Integer.parseInt(leaveMatcher.group(1));
-            int freeSlotNum = parkingLot.leave(slotNo);
-            if (freeSlotNum > 0) System.out.println("Slot number " + freeSlotNum + " is free");
-        } else if (registrationNoMatcher.matches()) {
-            String color = registrationNoMatcher.group(1);
-            List<String> registrationNumbers = parkingLot.getRegistrationNumbersForColor(color);
-            System.out.println(registrationNumbers);
-        } else if (statusMatcher.matches()) {
-            parkingLot.showParkingStatus();
-        } else if (exitMatcher.matches()) {
-            parkingLot.exitConsole();
+        if (parkingLot == null && !command.startsWith("create_parking_lot")) {
+            System.out.println("Please create a parking lot first.");
+            return;
         }
 
+        // Compile regular expressions for commands
+        Pattern createPattern = Pattern.compile("create_parking_lot (\\d+)");
+        Pattern parkPattern = Pattern.compile("park (\\S+) (\\S+)");
+        Pattern leavePattern = Pattern.compile("leave (\\d+)");
+        Pattern registrationNoPattern = Pattern.compile("registration_numbers_for_cars_with_colour (\\S+)");
+        Pattern statusPattern = Pattern.compile("status");
+        Pattern exitPattern = Pattern.compile("exit");
+
+        Matcher createMatcher = createPattern.matcher(command);
+        Matcher parkMatcher = parkPattern.matcher(command);
+        Matcher leaveMatcher = leavePattern.matcher(command);
+        Matcher registrationNoMatcher = registrationNoPattern.matcher(command);
+        Matcher statusMatcher = statusPattern.matcher(command);
+        Matcher exitMatcher = exitPattern.matcher(command);
+
+        // Execute corresponding command
+        if (createMatcher.matches()) {
+            executeCreateParkingLotCommand(createMatcher);
+        } else if (parkMatcher.matches()) {
+            executeParkCarCommand(parkMatcher);
+        } else if (leaveMatcher.matches()) {
+            executeLeaveCommand(leaveMatcher);
+        } else if (registrationNoMatcher.matches()) {
+            executeRegistrationNumbersCommand(registrationNoMatcher);
+        } else if (statusMatcher.matches()) {
+            executeStatusCommand();
+        } else if (exitMatcher.matches()) {
+            executeExitCommand();
+        } else {
+            System.out.println("Invalid command. Please try again.");
+        }
     }
 
-    private static void printCommands() {
+    private static void executeCreateParkingLotCommand(Matcher matcher) {
+        int capacity = Integer.parseInt(matcher.group(1));
+        parkingLot = new ParkingLot(capacity);
+        System.out.println("Created a parking lot with " + capacity + " slots");
+    }
+
+    private static void executeParkCarCommand(Matcher matcher) {
+        String registrationNumber = matcher.group(1);
+        String color = matcher.group(2);
+        int parkedSlotNum = parkingLot.parkCar(registrationNumber, color);
+        if (parkedSlotNum > 0) {
+            System.out.println("Allocated slot number: " + parkedSlotNum);
+        } else {
+            System.out.println("Sorry, parking lot is full");
+        }
+    }
+
+    private static void executeLeaveCommand(Matcher matcher) {
+        int slotNo = Integer.parseInt(matcher.group(1));
+        int freeSlotNum = parkingLot.leave(slotNo);
+        if (freeSlotNum > 0) {
+            System.out.println("Slot number " + freeSlotNum + " is free");
+        }
+    }
+
+    private static void executeRegistrationNumbersCommand(Matcher matcher) {
+        String color = matcher.group(1);
+        List<String> registrationNumbers = parkingLot.getRegistrationNumbersForColor(color);
+        if (!registrationNumbers.isEmpty()) {
+            System.out.println(registrationNumbers);
+        } else {
+            System.out.println("No cars found with color " + color);
+        }
+    }
+
+    private static void executeStatusCommand() {
+        parkingLot.showParkingStatus();
+    }
+
+    private static void executeExitCommand() {
+        parkingLot.exitConsole();
+    }
+
+    private static void printIntroduction() {
         System.out.println("***************************************************************************************");
         System.out.println("**********************  WELCOME TO PARKING SYSTEM APPLICATION  ************************");
-        System.out.println("***************************************************************************************");
         System.out.println("*******************************  SAMPLE INPUT COMMANDS  *******************************");
+        System.out.println("***************************************************************************************");
         System.out.println("$ create_parking_lot {capacity}");
-        System.out.println("$ park {car_number}");
+        System.out.println("$ park {registration_no} {color}");
         System.out.println("$ leave {slot_number}");
+        System.out.println("$ registration_numbers_for_cars_with_colour {color}");
         System.out.println("$ status");
         System.out.println("$ exit");
-        System.out.println("--Enter a command:--");
+        System.out.println("--Enter a command--");
     }
 
 }

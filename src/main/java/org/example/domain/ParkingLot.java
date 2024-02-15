@@ -21,8 +21,6 @@ public class ParkingLot {
         for (int i = 0; i < capacity; i++) {
             this.parkingSlots.add(new ParkingSlot(i + 1));
         }
-
-        System.out.println("Created a parking lot with " + capacity + " slots");
     }
 
     public int parkCar(String registrationNumber, String color) {
@@ -39,7 +37,7 @@ public class ParkingLot {
     }
 
     public void showParkingStatus() {
-        System.out.println("Slot Registration-No Color");
+        System.out.println("Slot Registration Color");
         for (ParkingSlot slot : parkingSlots) {
             if (Objects.nonNull(slot.getCar())) {
                 System.out.println(slot.toString());
@@ -62,8 +60,8 @@ public class ParkingLot {
 
     private boolean isCarParked(Car car) {
         for (ParkingSlot slot : parkingSlots) {
-            if (slot.getCar().equals(car)) {
-                return true;
+            if (Objects.nonNull(slot) && (slot.getCar().equals(car))) {
+                    return true;
             }
         }
         return false;
@@ -102,4 +100,5 @@ public class ParkingLot {
     public void exitConsole() {
         System.exit(0);
     }
+
 }
