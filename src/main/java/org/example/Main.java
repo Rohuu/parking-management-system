@@ -9,12 +9,12 @@ import java.util.regex.Pattern;
 public class Main {
 
     public static void main(String[] args) {
+        printCommands();
 
         Scanner scanner = new Scanner(System.in);
         boolean exitRequested = false;
 
         while (!exitRequested) {
-            System.out.println("Enter a command:");
             String command = scanner.nextLine().trim().toLowerCase();
             if (command.equals("exit")) {
                 exitRequested = true;
@@ -59,12 +59,25 @@ public class Main {
         } else if (registrationNoMatcher.matches()) {
             String color = registrationNoMatcher.group(0);
             parkingLot.getRegistrationNumbersForColor(color);
-        }else if (statusMatcher.matches()) {
+        } else if (statusMatcher.matches()) {
             parkingLot.showParkingStatus();
-        }else if (exitMatcher.matches()) {
+        } else if (exitMatcher.matches()) {
             parkingLot.exitConsole();
         }
 
+    }
+
+    private static void printCommands() {
+        System.out.println("***************************************************************************************");
+        System.out.println("**********************  WELCOME TO PARKING SYSTEM APPLICATION  ************************");
+        System.out.println("***************************************************************************************");
+        System.out.println("*******************************  SAMPLE INPUT COMMANDS  *******************************");
+        System.out.println("$ create_parking_lot {capacity}");
+        System.out.println("$ park {car_number}");
+        System.out.println("$ leave {VehicleNUmber} {hours}");
+        System.out.println("$ status");
+        System.out.println("$ exit");
+        System.out.println("--Enter a command:--");
     }
 
 }
