@@ -29,4 +29,5 @@ public class ParkingSlot {
     public String toString() {
         return slotNumber + " " + car.toString();
     }
+
 }

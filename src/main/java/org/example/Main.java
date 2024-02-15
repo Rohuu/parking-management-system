@@ -28,41 +28,44 @@ public class Main {
     }
 
     private static void executeCommand(String command) {
-        if (parkingLot == null && !command.startsWith("create_parking_lot")) {
-            System.out.println("Please create a parking lot first.");
-            return;
-        }
+        try {
+            if (parkingLot == null && !command.startsWith("create_parking_lot")) {
+                throw new IllegalStateException("Please create a parking lot first.");
+            }
 
-        // Compile regular expressions for commands
-        Pattern createPattern = Pattern.compile("create_parking_lot (\\d+)");
-        Pattern parkPattern = Pattern.compile("park (\\S+) (\\S+)");
-        Pattern leavePattern = Pattern.compile("leave (\\d+)");
-        Pattern registrationNoPattern = Pattern.compile("registration_numbers_for_cars_with_colour (\\S+)");
-        Pattern statusPattern = Pattern.compile("status");
-        Pattern exitPattern = Pattern.compile("exit");
+            // Compile regular expressions for commands
+            Pattern createPattern = Pattern.compile("create_parking_lot (\\d+)");
+            Pattern parkPattern = Pattern.compile("park (\\S+) (\\S+)");
+            Pattern leavePattern = Pattern.compile("leave (\\d+)");
+            Pattern registrationNoPattern = Pattern.compile("registration_numbers_for_cars_with_colour (\\S+)");
+            Pattern statusPattern = Pattern.compile("status");
+            Pattern exitPattern = Pattern.compile("exit");
 
-        Matcher createMatcher = createPattern.matcher(command);
-        Matcher parkMatcher = parkPattern.matcher(command);
-        Matcher leaveMatcher = leavePattern.matcher(command);
-        Matcher registrationNoMatcher = registrationNoPattern.matcher(command);
-        Matcher statusMatcher = statusPattern.matcher(command);
-        Matcher exitMatcher = exitPattern.matcher(command);
+            Matcher createMatcher = createPattern.matcher(command);
+            Matcher parkMatcher = parkPattern.matcher(command);
+            Matcher leaveMatcher = leavePattern.matcher(command);
+            Matcher registrationNoMatcher = registrationNoPattern.matcher(command);
+            Matcher statusMatcher = statusPattern.matcher(command);
+            Matcher exitMatcher = exitPattern.matcher(command);
 
-        // Execute corresponding command
-        if (createMatcher.matches()) {
-            executeCreateParkingLotCommand(createMatcher);
-        } else if (parkMatcher.matches()) {
-            executeParkCarCommand(parkMatcher);
-        } else if (leaveMatcher.matches()) {
-            executeLeaveCommand(leaveMatcher);
-        } else if (registrationNoMatcher.matches()) {
-            executeRegistrationNumbersCommand(registrationNoMatcher);
-        } else if (statusMatcher.matches()) {
-            executeStatusCommand();
-        } else if (exitMatcher.matches()) {
-            executeExitCommand();
-        } else {
-            System.out.println("Invalid command. Please try again.");
+            // Execute corresponding command
+            if (createMatcher.matches()) {
+                executeCreateParkingLotCommand(createMatcher);
+            } else if (parkMatcher.matches()) {
+                executeParkCarCommand(parkMatcher);
+            } else if (leaveMatcher.matches()) {
+                executeLeaveCommand(leaveMatcher);
+            } else if (registrationNoMatcher.matches()) {
+                executeRegistrationNumbersCommand(registrationNoMatcher);
+            } else if (statusMatcher.matches()) {
+                executeStatusCommand();
+            } else if (exitMatcher.matches()) {
+                executeExitCommand();
+            } else {
+                System.out.println("Invalid command. Please try again.");
+            }
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
         }
     }
 
