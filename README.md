@@ -4,9 +4,9 @@
 This project implements a simple parking management system written in Java 17. It allows users to create a parking lot, park cars, retrieve registration numbers by color, check parking status, leave slots, and exit the system.
 
 ## Prerequisites
-- Java 17
+- Java 11
 - Maven
-- Lombok 1.18.30
+- Lombok 1.18.22
 
 ## Installation
 1. Clone the project from GitHub:<br>
@@ -28,7 +28,7 @@ This project implements a simple parking management system written in Java 17. I
    <dependency>
        <groupId>org.projectlombok</groupId>
        <artifactId>lombok</artifactId>
-       <version>1.18.30</version>
+       <version>1.18.22</version>
        <scope>provided</scope>
    </dependency>
 
